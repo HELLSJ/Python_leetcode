@@ -23,3 +23,12 @@ def searchMatrix(self, matrix, target):
         else:
             x += 1
     return False
+
+# 方法一：暴力搜
+def searchMatrix1(self, matrix, target):
+    for row in matrix:
+        for element in row:
+            if element == target:
+                return True
+    return False
+
