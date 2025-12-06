@@ -1,3 +1,8 @@
+class ListNode(object):
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
 # Leetcode 160 相交链表 https://leetcode.cn/problems/intersection-of-two-linked-lists/?envType=study-plan-v2&envId=top-100-liked
 # 使用双指针的方法，可以将空间复杂度降至 O(1)。
 #
@@ -145,3 +150,64 @@ def detectCycle2(self, head):
         slow = slow.next
     return ptr
 
+# Leetcode 21 合并两个链表 https://leetcode.cn/problems/merge-two-sorted-lists/?envType=study-plan-v2&envId=top-100-liked
+
+# 每次从两个链表的当前节点中选取更小的，把它作为结果链表的下一节点，然后递归处理剩下的节点
+def mergeTwoLists(self, list1, list2):
+    if list1 is None:
+        return list2
+    elif list2 is None:
+        return list1
+    elif list1.val<list2.val:
+        list1.next = self.mergeTwoLists(list1.next, list2)
+        return list1
+    else:
+        list2.next = self.mergeTwoLists(list2.next, list1)
+        return list2
+
+# Leetcode 02 两数之和 https://leetcode.cn/problems/add-two-numbers/?envType=study-plan-v2&envId=top-100-liked
+
+# 1. 准备一个 虚拟头节点 dummy，再用指针 cur 指向它，用来构造结果链表。
+#
+# 2. 准备一个整型变量 carry，初始为 0。
+#
+# 3. 遍历两个链表，条件可以写为：while l1 or l2 or carry：
+# 取出当前位的值：
+# x = l1.val if l1 else 0
+# y = l2.val if l2 else 0
+# 计算这一位的总和：total = x + y + carry
+# 得到当前位数字：digit = total % 10
+# 更新进位：carry = total // 10
+# 创建新节点 digit 挂到 cur.next，然后 cur = cur.next
+# l1 和 l2 往后移动（如果存在的话）
+# 4. 循环结束后，dummy.next 就是结果链表的头结点。
+def addTwoNumbers(self, l1, l2):
+    num_0 = 0  # 当前位的和（个位）
+    num_10 = 0  # 进位（carry）
+    cur = dum = ListNode()  # 虚拟头节点（dummy node）
+
+    while l1 or l2:
+        # 如果某个链表走完了，就用值为 0 的新节点代替（处理链表不等长的问题）
+        if not l1:
+            l1 = ListNode(0)
+        if not l2:
+            l2 = ListNode(0)
+
+        # 计算当前位的和与进位
+        total = l1.val + l2.val + num_10
+        num_0 = total % 10  # 当前位结果（个位数是多少）
+        num_10 = total // 10  # 新的进位（十位）
+
+        # 构建结果链表
+        cur.next = ListNode(val=num_0)
+        cur = cur.next
+
+        # 移动指针
+        l1 = l1.next
+        l2 = l2.next
+
+    # 处理最后的进位（如 999 + 1 = 1000）
+    if num_10 != 0:
+        cur.next = ListNode(val=num_10)  # cur是虚拟头节点，所以cur.next直接当作是头节点了
+
+    return dum.next  # 返回真实头节点
