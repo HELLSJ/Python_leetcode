@@ -211,3 +211,24 @@ def addTwoNumbers(self, l1, l2):
         cur.next = ListNode(val=num_10)  # cur是虚拟头节点，所以cur.next直接当作是头节点了
 
     return dum.next  # 返回真实头节点
+
+# Leetcode 19.删除链表的倒数第 N 个结点
+# https://leetcode.cn/problems/remove-nth-node-from-end-of-list/description/?envType=study-plan-v2&envId=top-100-liked
+
+# 定义两个指针，一个left一个right
+# 再创建一个dummy哨兵节点，next指向头节点，因为倒数第n个节点就是头节点，删除了就没有头节点了
+# 假设链表长度为m, 要删除倒数第n个节点就是第m-n+1个节点，先让right走n步，然后再让left和right同时走，right走到结尾需要m-n步，left也一样走m-n步
+# 这样当right走到倒数第一个节点时，left刚好在要删除的倒数第n个节点的左边，这个时候left.next = left.next.next就能把要删除的节点删掉了
+# 最后再返回dummy.next（头节点）
+def removeNthFromEnd(self, head, n):
+
+    dummy = ListNode(next=head)
+    right = dummy
+    for i in range(n):
+        right = right.next
+    left = dummy
+    while right.next:
+        left = left.next
+        right = right.next
+    left.next = left.next.next
+    return dummy.next
