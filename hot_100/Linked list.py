@@ -235,11 +235,11 @@ def removeNthFromEnd(self, head, n):
 
 # 24.两两交换链表中的节点 https://leetcode.cn/problems/swap-nodes-in-pairs/submissions/683066739/?envType=study-plan-v2&envId=top-100-liked
 # 创建哨兵节点 dummy，表示节点 0。
-# 下面用 nodeo 表示 0，node1 表示 1，依此类推。
-# 1.把 nodeo 指向 node2.
-# 2.把 nodez 指向 node1。3.把 node1 指向 node3.
-# 4. 更新 nodeo为 node1,更新 node1为 node3。
-# 5.如果 node1和 node1.next 都不为空就回到第一步，执行下一轮交换。
+# 下面用 node0 表示 0，node1 表示 1，依此类推。
+# 1.把 node0 指向 node2.
+# 2.把 node2 指向 node1。3.把 node1 指向 node3.
+# 4. 更新 node0为 node1,更新 node1为 node3。
+# 5.如果 node1 和 node1.next 都不为空就回到第一步，执行下一轮交换。
 # 6. 最后返回 dummy.next，作为新链表的头节点。
 
 def swapPairs(self, head):
@@ -256,3 +256,50 @@ def swapPairs(self, head):
         node0 = node1  # 下一轮交换，0 是 1
         node1 = node3  # 下一轮交换，1 是 3
     return dummy.next  # 返回新链表的头节点
+
+# Leetcode 138.随机链表的复制  https://leetcode.cn/problems/copy-list-with-random-pointer/description/?envType=study-plan-v2&envId=top-100-liked
+# 如果没有 random 指针，只需在遍历链表的同时，依次复制每个节点（创建新节点并复制 val），添加在新链表的末尾。
+# 有 random 指针，问题就变得复杂了，我们需要知道 random 指向的那个节点，在新链表中是哪个节点。
+# 所以必须记录原链表节点到新链表节点的映射（map）。这样可以通过原链表 random 指向的节点，知道新链表的 random 应该指向哪个节点。
+# 可以把新链表和旧链表「混在一起」。
+#
+# 例如链表 1→2→3，依次复制每个节点（创建新节点并复制 val 和 next），把新节点直接插到原节点的后面，形成一个交错链表：
+# 1→1′→2→2′→3→3′
+# 如此一来，原链表节点的下一个节点，就是其对应的新链表节点了！
+# 然后遍历这个交错链表，假如节点 1 的 random 指向节点 3，那么就把节点 1′的 random 指向节点 3 的下一个节点 3′，这样就完成了对 random 指针的复制。
+# 最后，从交错链表中分离出 1′→2′→3′，即为深拷贝后的链表
+
+class Node:
+    def __init__(self, x, next=None, random=None):
+        self.val = int(x)
+        self.next = next
+        self.random = random
+def copyRandomList(self, head):
+    if head is None:
+        return None
+
+    # 复制每个节点，把新节点直接插到原节点的后面
+    # A->B->C 变成 A->A'->B->B'->C->C'
+    cur = head
+    while cur:
+        cur.next = Node(cur.val, cur.next)
+        cur = cur.next.next
+
+    # 遍历交错链表中的原链表节点
+    cur = head
+    while cur:
+        if cur.random:
+            # 要复制的 random 是 cur.random 的下一个节点
+            cur.next.random = cur.random.next
+        cur = cur.next.next
+
+    # 把交错链表分离成两个链表
+    new_head = head.next # A'(新链表的头节点)
+    cur = head
+    while cur.next.next: # 每次都要遍历下一个节点（原链表.next）还有下下个节点是否存在（新链表.next）
+        copy = cur.next # 新链表 copy = A.next = A'
+        cur.next = copy.next  # 恢复原节点的 next A.next = A'.next = B
+        copy.next = copy.next.next  # 设置新节点的 next A'.next = B.next = B'
+        cur = cur.next # 遍历下一个节点
+    cur.next = None  # 恢复原节点的 next
+    return new_head
