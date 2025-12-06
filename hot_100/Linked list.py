@@ -232,3 +232,27 @@ def removeNthFromEnd(self, head, n):
         right = right.next
     left.next = left.next.next
     return dummy.next
+
+# 24.两两交换链表中的节点 https://leetcode.cn/problems/swap-nodes-in-pairs/submissions/683066739/?envType=study-plan-v2&envId=top-100-liked
+# 创建哨兵节点 dummy，表示节点 0。
+# 下面用 nodeo 表示 0，node1 表示 1，依此类推。
+# 1.把 nodeo 指向 node2.
+# 2.把 nodez 指向 node1。3.把 node1 指向 node3.
+# 4. 更新 nodeo为 node1,更新 node1为 node3。
+# 5.如果 node1和 node1.next 都不为空就回到第一步，执行下一轮交换。
+# 6. 最后返回 dummy.next，作为新链表的头节点。
+
+def swapPairs(self, head):
+    node0 = dummy = ListNode(next=head)  # 用哨兵节点简化代码逻辑
+    node1 = head
+    while node1 and node1.next:  # 至少有两个节点
+        node2 = node1.next
+        node3 = node2.next
+
+        node0.next = node2  # 0 -> 2
+        node2.next = node1  # 2 -> 1
+        node1.next = node3  # 1 -> 3
+
+        node0 = node1  # 下一轮交换，0 是 1
+        node1 = node3  # 下一轮交换，1 是 3
+    return dummy.next  # 返回新链表的头节点
