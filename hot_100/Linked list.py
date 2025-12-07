@@ -54,21 +54,6 @@ def isPalindrome(self, head):
         current_node = current_node.next
     return vals==vals[::-1]
 
-# Leetcode 21 合并两个链表 https://leetcode.cn/problems/merge-two-sorted-lists/?envType=study-plan-v2&envId=top-100-liked
-
-# 每次从两个链表的当前节点中选取更小的，把它作为结果链表的下一节点，然后递归处理剩下的节点
-def mergeTwoLists(self, list1, list2):
-    if list1 is None:
-        return list2
-    elif list2 is None:
-        return list1
-    elif list1.val<list2.val:
-        list1.next = self.mergeTwoLists(list1.next, list2)
-        return list1
-    else:
-        list2.next = self.mergeTwoLists(list2.next, list1)
-        return list2
-
 # Leetcode 02 两数之和 https://leetcode.cn/problems/add-two-numbers/?envType=study-plan-v2&envId=top-100-liked
 
 # 1. 准备一个 虚拟头节点 dummy，再用指针 cur 指向它，用来构造结果链表。
@@ -137,7 +122,7 @@ def removeNthFromEnd(self, head, n):
     left.next = left.next.next
     return dummy.next
 
-# 24.两两交换链表中的节点 https://leetcode.cn/problems/swap-nodes-in-pairs/submissions/683066739/?envType=study-plan-v2&envId=top-100-liked
+# Leetcode 24.两两交换链表中的节点 https://leetcode.cn/problems/swap-nodes-in-pairs/submissions/683066739/?envType=study-plan-v2&envId=top-100-liked
 # 创建哨兵节点 dummy，表示节点 0。
 # 下面用 node0 表示 0，node1 表示 1，依此类推。
 # 1.把 node0 指向 node2.
@@ -208,12 +193,130 @@ def copyRandomList(self, head):
     cur.next = None  # 恢复原节点的 next
     return new_head
 
-# Leetcode 876 链表的中间节点 https://leetcode.cn/problems/middle-of-the-linked-list/description/
-# 设置快慢指针，快指针速度时慢指针两倍，快指针到终点的时候慢指针所在的位置刚好是中间位置
-def middleNode(self, head):
-    slow = fast = head
-    while fast and fast.next:
-        slow = slow.next
-        fast = fast.next.next
-    return slow
+# Leetcode 21.合并两个链表 https://leetcode.cn/problems/merge-two-sorted-lists/?envType=study-plan-v2&envId=top-100-liked
 
+# 递归做法：每次从两个链表的当前节点中选取更小的，把它作为结果链表的下一节点，然后递归处理剩下的节点
+def mergeTwoLists(self, list1, list2):
+    if list1 is None:
+        return list2
+    elif list2 is None:
+        return list1
+    elif list1.val<list2.val:
+        list1.next = self.mergeTwoLists(list1.next, list2)
+        return list1
+    else:
+        list2.next = self.mergeTwoLists(list2.next, list1)
+        return list2
+
+# 迭代做法
+# 创建一个哨兵节点，作为合并后的新链表头节点的前一个节点。这样可以避免单独处理头节点，也无需特判链表为空的情况，从而简化代码。
+#
+# 比较 list1 和 list2的节点值，如果 list1的节点值小，则把 list1加到新链表的末尾，然后把 list1替换成它的下一个节点。
+# 如果 list2的节点值小则同理。如果两个节点值一样，那么把谁加到新链表的末尾都是一样的，不妨规定把 list 2加到新链表末尾。
+# 重复上述过程，直到其中一个链表为空。
+# 循环结束后，其中一个链表可能还有剩余的节点，将剩余部分加到新链表的末尾。
+# 最后，返回新链表的头节点，即哨兵节点的下一个节点。
+
+def mergeTwoLists1(self, list1, list2):
+    cur = dummy = ListNode()  # 用哨兵节点简化代码逻辑
+    while list1 and list2:
+        if list1.val < list2.val:
+            cur.next = list1  # 把 list1 加到新链表中
+            list1 = list1.next
+        else:  # 注：相等的情况加哪个节点都是可以的
+            cur.next = list2  # 把 list2 加到新链表中
+            list2 = list2.next
+        cur = cur.next
+    cur.next = list1 or list2  # 拼接剩余链表
+    return dummy.next
+
+
+# Leetcode 148.排序链表 https://leetcode.cn/problems/sort-list/?envType=study-plan-v2&envId=top-100-liked
+def get_length(self, head):
+    length = 0
+    while head:
+        length += 1
+        head = head.next
+    return length
+
+# 分割链表
+# 如果链表长度 <= size，不做任何操作，返回空节点
+# 如果链表长度 > size，把链表的前 size 个节点分割出来（断开连接），并返回剩余链表的头节点
+class Solution:
+    def splitList(self, head, size):
+        cur = head
+        for i in range(size - 1):
+            if cur is None:
+                break
+            cur = cur.next
+        if cur is None or cur.next is None:
+            return None
+
+        next_head = cur.next
+        cur.next = None
+        return next_head
+
+    # Leetcode 21 合并两个有序链表，这个是迭代做法
+    # 返回合并后的链表的头节点和尾节点
+    def mergeTwoLists(self, list1, list2):
+        cur = dummy = ListNode()
+        while list1 and list2:
+            if list1.val < list2.val:
+                cur.next = list1
+                list1 = list1.next
+            else:
+                cur.next = list2
+                list2 = list2.next
+            cur = cur.next
+        cur.next = list1 or list2  # 拼接剩余链表
+        while cur.next:
+            cur = cur.next
+        # 循环结束后，cur是合并后链表的尾节点
+        return dummy.next, cur
+
+    def sortList(self, head):
+        length = self.get_length(head)  # 获取链表长度
+        dummy = ListNode(next=head)  # 用哨兵节点简化代码逻辑
+        step = 1  # 步长（参与合并的链表长度）
+        while step < length:
+            new_list_tail = dummy  # 新链表的末尾
+            cur = dummy.next  # 每轮循环的起始节点
+            while cur:
+                # 从 cur 开始，分割出两段长为 step 的链表，头节点分别为 head1 和 head2
+                head1 = cur
+                head2 = self.splitList(head1, step)
+                cur = self.splitList(head2, step)  # 下一轮循环的起始节点
+                # 合并两段长为 step 的链表
+                head, tail = self.mergeTwoLists(head1, head2)
+                # 合并后的头节点 head，插到 new_list_tail 的后面
+                new_list_tail.next = head
+                new_list_tail = tail  # tail 现在是新链表的末尾
+            step *= 2
+        return dummy.next
+
+# Leetcode 23.合并K个升序链表 https://leetcode.cn/problems/merge-k-sorted-lists/description/?envType=study-plan-v2&envId=top-100-liked
+# 递归做法，前面Leetcode 21已经提供了合并两个列表的方法了，返回值还就是合并后列表的头节点
+# 递归的话就很简单，先递归左边，再递归右边，最后再调用这个方法合并左右就行了
+class Solution1(object):
+    def mergeTwoLists(self, list1, list2):
+        if list1 is None:
+            return list2
+        elif list2 is None:
+            return list1
+        elif list1.val < list2.val:
+            list1.next = self.mergeTwoLists(list1.next, list2)
+            return list1
+        else:
+            list2.next = self.mergeTwoLists(list2.next, list1)
+            return list2
+
+    def mergeKLists(self, lists):
+        m = len(lists)
+        if m == 0:
+            return None
+        if m == 1:
+            return lists[0]
+
+        left = self.mergeKLists(lists[:m // 2])
+        right = self.mergeKLists(lists[m // 2:])
+        return self.mergeTwoLists(left, right)
