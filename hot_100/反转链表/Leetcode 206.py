@@ -1,5 +1,5 @@
 # Leetcode 206 反转链表 https://leetcode.cn/problems/reverse-linked-list/description/?envType=study-plan-v2&envId=top-100-liked
-
+# 简单做法
 def reverseList(self, head):
     cur, pre = head, None
     while cur:
@@ -8,7 +8,7 @@ def reverseList(self, head):
         pre = cur  # pre 暂存 cur
         cur = tmp  # cur 访问下一节点
     return pre
-
+# 递归做法
 # def reverseList(self, head):
 #     def recur(cur, pre):
 #         if not cur:
