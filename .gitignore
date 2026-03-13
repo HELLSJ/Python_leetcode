@@ -1,0 +1,14 @@
+# Ignore PyCharm project files
+.idea/
+*.iml
+*.xml
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# System files
+.DS_Store
+Thumbs.db
+
